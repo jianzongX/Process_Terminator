@@ -5,7 +5,7 @@
 #include <shellapi.h>
 #include <shlobj.h>
 
-// ¶¨Òå°´Å¥ID
+// å®šä¹‰æŒ‰é’®ID
 #define ID_BUTTON_RED_DEL      101
 #define ID_BUTTON_RED_RESTORE  102
 #define ID_BUTTON_WIND_DEL     103
@@ -13,7 +13,7 @@
 #define ID_GOTO_BUTTON         105
 #define ID_CLOSE_BUTTON        106
 
-// È«¾Ö±äÁ¿
+// å…¨å±€å˜é‡
 HWND g_hStatus = NULL;
 HWND g_hMainWnd = NULL;
 HWND g_hGotoButton = NULL;
@@ -21,7 +21,7 @@ const int STATUS_HEIGHT = 20;
 const int GOTO_BUTTON_WIDTH = 150;
 const int GOTO_BUTTON_HEIGHT = 50;
 
-// º¯ÊıÉùÃ÷
+// å‡½æ•°å£°æ˜
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK GotoWndProc(HWND, UINT, WPARAM, LPARAM);
 void UpdateStatus(HWND hwnd, const wchar_t* text);
@@ -33,7 +33,7 @@ bool IsProcessRunning(const wchar_t* processName);
 void KillTargetProcesses(const std::vector<std::wstring>& targets);
 void RefreshSystemTray();
 
-// ºìÖ©ÖëºÍ´ó·ç³µµÄÅäÖÃ
+// çº¢èœ˜è››å’Œå¤§é£è½¦çš„é…ç½®
 namespace RedSpider {
     const std::vector<std::wstring> targets = {
         L"REDAgent.exe", L"checkrs.exe", L"rscheck.exe"
@@ -48,7 +48,7 @@ namespace Windmill {
     const wchar_t* restorePath = L"C:\\Program Files (x86)\\Cooltion\\Elearning\\iConsoleApp.exe";
 }
 
-// ¼ì²é¹ÜÀíÔ±È¨ÏŞ
+// æ£€æŸ¥ç®¡ç†å‘˜æƒé™
 bool IsUserAnAdmin() {
     BOOL isAdmin = FALSE;
     SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
@@ -65,7 +65,7 @@ bool IsUserAnAdmin() {
     return isAdmin == TRUE;
 }
 
-// Ê¹ÓÃtaskkillÃüÁîÖÕÖ¹½ø³Ì
+// ä½¿ç”¨taskkillå‘½ä»¤ç»ˆæ­¢è¿›ç¨‹
 bool KillProcessWithTaskkill(const wchar_t* processName) {
     std::wstring command = L"taskkill /f /im \"" + std::wstring(processName) + L"\"";
     
@@ -76,7 +76,7 @@ bool KillProcessWithTaskkill(const wchar_t* processName) {
     
     if (CreateProcessW(NULL, (LPWSTR)command.c_str(), NULL, NULL, FALSE, 
                       CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
-        WaitForSingleObject(pi.hProcess, 5000); // µÈ´ı5Ãë
+        WaitForSingleObject(pi.hProcess, 5000); // ç­‰å¾…5ç§’
         DWORD exitCode;
         GetExitCodeProcess(pi.hProcess, &exitCode);
         CloseHandle(pi.hProcess);
@@ -86,7 +86,7 @@ bool KillProcessWithTaskkill(const wchar_t* processName) {
     return false;
 }
 
-// ¼ì²é½ø³ÌÊÇ·ñÔËĞĞ
+// æ£€æŸ¥è¿›ç¨‹æ˜¯å¦è¿è¡Œ
 bool IsProcessRunning(const wchar_t* processName) {
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if (hSnapshot == INVALID_HANDLE_VALUE) return false;
@@ -107,12 +107,12 @@ bool IsProcessRunning(const wchar_t* processName) {
     return result;
 }
 
-// ÖÕÖ¹Ä¿±ê½ø³Ì
+// ç»ˆæ­¢ç›®æ ‡è¿›ç¨‹
 void KillTargetProcesses(const std::vector<std::wstring>& targets) {
     for (const auto& proc : targets) {
-        // Ê¹ÓÃtaskkillÃüÁîÖÕÖ¹½ø³Ì
+        // ä½¿ç”¨taskkillå‘½ä»¤ç»ˆæ­¢è¿›ç¨‹
         if (!KillProcessWithTaskkill(proc.c_str())) {
-            // Èç¹ûtaskkillÊ§°Ü£¬³¢ÊÔÔ­Ê¼·½·¨
+            // å¦‚æœtaskkillå¤±è´¥ï¼Œå°è¯•åŸå§‹æ–¹æ³•
             HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
             if (hSnapshot != INVALID_HANDLE_VALUE) {
                 PROCESSENTRY32W pe;
@@ -133,12 +133,12 @@ void KillTargetProcesses(const std::vector<std::wstring>& targets) {
             }
         }
         
-        // ¶ÌÔİÑÓ³ÙÈÃÏµÍ³´¦Àí
+        // çŸ­æš‚å»¶è¿Ÿè®©ç³»ç»Ÿå¤„ç†
         Sleep(200);
     }
 }
 
-// Ë¢ĞÂÏµÍ³ÍĞÅÌ
+// åˆ·æ–°ç³»ç»Ÿæ‰˜ç›˜
 void RefreshSystemTray() {
     HWND hTrayWnd = FindWindowW(L"Shell_TrayWnd", NULL);
     if (hTrayWnd) {
@@ -150,9 +150,9 @@ void RefreshSystemTray() {
     }
 }
 
-// ²Ù×÷º¯Êı
+// æ“ä½œå‡½æ•°
 void PerformCleanOperation(HWND hwnd, const std::vector<std::wstring>& targets, const wchar_t* successMsg) {
-    UpdateStatus(hwnd, L"ÕıÔÚÇåÀí½ø³Ì...");
+    UpdateStatus(hwnd, L"æ­£åœ¨æ¸…ç†è¿›ç¨‹...");
     KillTargetProcesses(targets);
 
     bool allStopped = true;
@@ -164,11 +164,11 @@ void PerformCleanOperation(HWND hwnd, const std::vector<std::wstring>& targets, 
     }
 
     if (allStopped) {
-        UpdateStatus(hwnd, L"ÇåÀíÍê³É");
-        MessageBoxW(NULL, successMsg, L"²Ù×÷³É¹¦", MB_ICONINFORMATION);
+        UpdateStatus(hwnd, L"æ¸…ç†å®Œæˆ");
+        MessageBoxW(NULL, successMsg, L"æ“ä½œæˆåŠŸ", MB_ICONINFORMATION);
     } else {
-        UpdateStatus(hwnd, L"ÇåÀíÎ´Íê³É");
-        MessageBoxW(NULL, L"Ê§°Ü!\n½â¾ö°ì·¨:ÖØÊÔ", L"²Ù×÷¾¯¸æ", MB_ICONWARNING);
+        UpdateStatus(hwnd, L"æ¸…ç†æœªå®Œæˆ");
+        MessageBoxW(NULL, L"å¤±è´¥!\nè§£å†³åŠæ³•:é‡è¯•", L"æ“ä½œè­¦å‘Š", MB_ICONWARNING);
     }
     RefreshSystemTray();
 }
@@ -180,16 +180,16 @@ void PerformRestoreOperation(const wchar_t* exePath) {
     sei.nShow = SW_SHOWNORMAL;
 
     if (ShellExecuteExW(&sei)) {
-        MessageBoxW(NULL, L"³ÌĞòÒÑ³É¹¦Æô¶¯", L"²Ù×÷³É¹¦", MB_ICONINFORMATION);
+        MessageBoxW(NULL, L"ç¨‹åºå·²æˆåŠŸå¯åŠ¨", L"æ“ä½œæˆåŠŸ", MB_ICONINFORMATION);
     } else {
-        MessageBoxW(NULL, L"³ÌĞòÆô¶¯Ê§°Ü", L"²Ù×÷´íÎó", MB_ICONERROR);
+        MessageBoxW(NULL, L"ç¨‹åºå¯åŠ¨å¤±è´¥", L"æ“ä½œé”™è¯¯", MB_ICONERROR);
     }
 }
 
-// °´Å¥´¦Àíº¯Êı
+// æŒ‰é’®å¤„ç†å‡½æ•°
 void OnRedDeleteClick(HWND hwnd) {
     PerformCleanOperation(hwnd, RedSpider::targets, 
-        L"ÉÙÄê£¬±¾¾ÍÊÇÒ»Æ¬²»±»¶¨ÒåµÄº£\n          ×£ÄãÍæ»úÓä¿ì!");
+        L"å°‘å¹´ï¼Œæœ¬å°±æ˜¯ä¸€ç‰‡ä¸è¢«å®šä¹‰çš„æµ·\n          ç¥ä½ ç©æœºæ„‰å¿«!");
 }
 
 void OnRedRestoreClick() {
@@ -198,7 +198,7 @@ void OnRedRestoreClick() {
 
 void OnWindDeleteClick(HWND hwnd) {
     PerformCleanOperation(hwnd, Windmill::targets, 
-        L"ÉÙÄê£¬±¾¾ÍÊÇÒ»Æ¬²»±»¶¨ÒåµÄº£\n          ×£ÄãÍæ»úÓä¿ì!");
+        L"å°‘å¹´ï¼Œæœ¬å°±æ˜¯ä¸€ç‰‡ä¸è¢«å®šä¹‰çš„æµ·\n          ç¥ä½ ç©æœºæ„‰å¿«!");
 }
 
 void OnWindRestoreClick() {
@@ -209,14 +209,14 @@ void OnGotoButtonClick() {
     ShowMainWindow();
 }
 
-// ×´Ì¬À¸¸üĞÂº¯Êı
+// çŠ¶æ€æ æ›´æ–°å‡½æ•°
 void UpdateStatus(HWND hwnd, const wchar_t* text) {
     if (g_hStatus) {
         SetWindowTextW(g_hStatus, text);
     }
 }
 
-// ´´½¨Goto°´Å¥´°¿Ú
+// åˆ›å»ºGotoæŒ‰é’®çª—å£
 void CreateGotoButton() {
     WNDCLASSW wc = {};
     wc.lpfnWndProc = GotoWndProc;
@@ -225,7 +225,7 @@ void CreateGotoButton() {
     wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
     RegisterClassW(&wc);
 
-    // »ñÈ¡ÆÁÄ»³ß´ç
+    // è·å–å±å¹•å°ºå¯¸
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
     
@@ -241,15 +241,15 @@ void CreateGotoButton() {
         NULL, NULL, GetModuleHandle(NULL), NULL
     );
 
-    // ´´½¨"´ò¿ªÖ÷³ÌĞò"°´Å¥
+    // åˆ›å»º"æ‰“å¼€ä¸»ç¨‹åº"æŒ‰é’®
     CreateWindowW(
-        L"BUTTON", L"´ò¿ªÖ÷³ÌĞò",
+        L"BUTTON", L"æ‰“å¼€ä¸»ç¨‹åº",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
         0, 0, 100, GOTO_BUTTON_HEIGHT,
         g_hGotoButton, (HMENU)ID_GOTO_BUTTON, GetModuleHandle(NULL), NULL
     );
 
-    // ´´½¨X¹Ø±Õ°´Å¥
+    // åˆ›å»ºXå…³é—­æŒ‰é’®
     CreateWindowW(
         L"BUTTON", L"X",
         WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
@@ -258,7 +258,7 @@ void CreateGotoButton() {
     );
 }
 
-// ÏÔÊ¾Ö÷´°¿Ú
+// æ˜¾ç¤ºä¸»çª—å£
 void ShowMainWindow() {
     if (g_hMainWnd) {
         ShowWindow(g_hMainWnd, SW_SHOW);
@@ -266,7 +266,7 @@ void ShowMainWindow() {
     }
 }
 
-// Goto°´Å¥´°¿Ú¹ı³Ì
+// GotoæŒ‰é’®çª—å£è¿‡ç¨‹
 LRESULT CALLBACK GotoWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_COMMAND:
@@ -290,44 +290,44 @@ LRESULT CALLBACK GotoWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     return 0;
 }
 
-// Ö÷´°¿Ú¹ı³Ì
+// ä¸»çª—å£è¿‡ç¨‹
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_CREATE:
         g_hMainWnd = hwnd;
         
-        // ´´½¨×´Ì¬À¸
+        // åˆ›å»ºçŠ¶æ€æ 
         g_hStatus = CreateWindowW(
-            L"STATIC", L"¾ÍĞ÷",
+            L"STATIC", L"å°±ç»ª",
             WS_VISIBLE | WS_CHILD | SS_SUNKEN,
             0, 250 - STATUS_HEIGHT, 350, STATUS_HEIGHT,
             hwnd, NULL, NULL, NULL
         );
 
-        // ´´½¨½çÃæÔªËØ
-        CreateWindowW(L"STATIC", L"²»ĞéÒ»ÇĞ v2.0",
+        // åˆ›å»ºç•Œé¢å…ƒç´ 
+        CreateWindowW(L"STATIC", L"ä¸è™šä¸€åˆ‡ v2.0",
             WS_VISIBLE | WS_CHILD,
             100, 10, 150, 20,
             hwnd, NULL, NULL, NULL);
 
-        // µÚÒ»ÅÅ°´Å¥
-        CreateWindowW(L"BUTTON", L"É¾³ıºìÖ©Öë",
+        // ç¬¬ä¸€æ’æŒ‰é’®
+        CreateWindowW(L"BUTTON", L"åˆ é™¤çº¢èœ˜è››",
             WS_VISIBLE | WS_CHILD,
             30, 50, 120, 30,
             hwnd, (HMENU)ID_BUTTON_RED_DEL, NULL, NULL);
 
-        CreateWindowW(L"BUTTON", L"»Ö¸´ºìÖ©Öë",
+        CreateWindowW(L"BUTTON", L"æ¢å¤çº¢èœ˜è››",
             WS_VISIBLE | WS_CHILD,
             180, 50, 120, 30,
             hwnd, (HMENU)ID_BUTTON_RED_RESTORE, NULL, NULL);
 
-        // µÚ¶şÅÅ°´Å¥
-        CreateWindowW(L"BUTTON", L"É¾³ı´ó·ç³µ",
+        // ç¬¬äºŒæ’æŒ‰é’®
+        CreateWindowW(L"BUTTON", L"åˆ é™¤å¤§é£è½¦",
             WS_VISIBLE | WS_CHILD,
             30, 100, 120, 30,
             hwnd, (HMENU)ID_BUTTON_WIND_DEL, NULL, NULL);
 
-        CreateWindowW(L"BUTTON", L"»Ö¸´´ó·ç³µ",
+        CreateWindowW(L"BUTTON", L"æ¢å¤å¤§é£è½¦",
             WS_VISIBLE | WS_CHILD,
             180, 100, 120, 30,
             hwnd, (HMENU)ID_BUTTON_WIND_RESTORE, NULL, NULL);
@@ -367,15 +367,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
     return 0;
 }
 
-// Ö÷º¯Êı
+// ä¸»å‡½æ•°
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    // ¼ì²é¹ÜÀíÔ±È¨ÏŞ
+    // æ£€æŸ¥ç®¡ç†å‘˜æƒé™
     if (!IsUserAnAdmin()) {
-        MessageBoxW(NULL, L"ÇëÒÔ¹ÜÀíÔ±Éí·İÔËĞĞ´Ë³ÌĞòÒÔ»ñµÃÍêÕû¹¦ÄÜ", L"È¨ÏŞ²»×ã", MB_ICONWARNING);
-        // ÈÔÈ»¼ÌĞøÔËĞĞ£¬µ«Ä³Ğ©¹¦ÄÜ¿ÉÄÜÊÜÏŞ
+        MessageBoxW(NULL, L"è¯·ä»¥ç®¡ç†å‘˜èº«ä»½è¿è¡Œæ­¤ç¨‹åºä»¥è·å¾—å®Œæ•´åŠŸèƒ½", L"æƒé™ä¸è¶³", MB_ICONWARNING);
+        // ä»ç„¶ç»§ç»­è¿è¡Œï¼Œä½†æŸäº›åŠŸèƒ½å¯èƒ½å—é™
     }
 
-    // ×¢²áÖ÷´°¿ÚÀà
+    // æ³¨å†Œä¸»çª—å£ç±»
     WNDCLASSW wc = {};
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
@@ -384,14 +384,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 
     if (!RegisterClassW(&wc)) {
-        MessageBoxW(NULL, L"´°¿Ú×¢²áÊ§°Ü!", L"´íÎó", MB_ICONERROR);
+        MessageBoxW(NULL, L"çª—å£æ³¨å†Œå¤±è´¥!", L"é”™è¯¯", MB_ICONERROR);
         return 1;
     }
 
-    // ´´½¨Ö÷´°¿Ú (³õÊ¼Òş²Ø)
+    // åˆ›å»ºä¸»çª—å£ (åˆå§‹éšè—)
     g_hMainWnd = CreateWindowW(
         wc.lpszClassName,
-        L"²»ĞéÒ»ÇĞ v2.0",
+        L"ä¸è™šä¸€åˆ‡ v2.0",
         WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
         CW_USEDEFAULT, CW_USEDEFAULT,
         350, 200,
@@ -399,14 +399,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     );
 
     if (!g_hMainWnd) {
-        MessageBoxW(NULL, L"´°¿Ú´´½¨Ê§°Ü!", L"´íÎó", MB_ICONERROR);
+        MessageBoxW(NULL, L"çª—å£åˆ›å»ºå¤±è´¥!", L"é”™è¯¯", MB_ICONERROR);
         return 1;
     }
 
-    // ´´½¨Goto°´Å¥(°üº¬´ò¿ªºÍ¹Ø±Õ°´Å¥)
+    // åˆ›å»ºGotoæŒ‰é’®(åŒ…å«æ‰“å¼€å’Œå…³é—­æŒ‰é’®)
     CreateGotoButton();
 
-    // ÏûÏ¢Ñ­»·
+    // æ¶ˆæ¯å¾ªç¯
     MSG msg;
     while (GetMessageW(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
@@ -415,3 +415,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     return (int)msg.wParam;
 }
+
